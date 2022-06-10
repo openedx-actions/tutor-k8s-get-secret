@@ -21,7 +21,8 @@ runs:
   using: "composite"
   steps:
     - name: fetch from Kubernetes secrets
-      run: |-
-        kubectl get secret mysql-notes -n ${{ inputs.namespace }}  -o json | jq  '.data | map_values(@base64d)' | jq -r 'keys[] as $k | "TUTOR_\($k|ascii_upcase)=\(.[$k])"' >> $GITHUB_ENV
+      id: get-secret
       shell: bash
+      run: |-
+        kubectl get secret ${{ inputs.eks-secret-name }} -n ${{ inputs.eks-namespace }}  -o json | jq  '.data | map_values(@base64d)' | jq -r 'keys[] as $k | "TUTOR_\($k|ascii_upcase)=\(.[$k])"' >> $GITHUB_ENV
 
