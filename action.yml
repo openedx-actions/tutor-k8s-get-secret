@@ -2,7 +2,7 @@
 # written by: mcdaniel
 # date: june-2022
 #------------------------------------------------------------------------------
-name: Open edX Tutor k8s get secret
+name: Open edX Tutor k8s get environment secret
 description: Github Action to convert k8s secrets into tutor config variables.
 branding:
   icon: 'cloud'
