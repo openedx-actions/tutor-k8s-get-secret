@@ -1,0 +1,27 @@
+#------------------------------------------------------------------------------
+# written by: mcdaniel
+# date: june-2022
+#------------------------------------------------------------------------------
+name: Open edX Tutor k8s get secret
+description: Github Action to convert k8s secrets into tutor config variables.
+branding:
+  icon: 'cloud'
+  color: 'orange'
+inputs:
+  eks-namespace:
+    description: 'The Kubernetes namesapce to which the Open edX platform environment will be deployed. Example: openedx-prod'
+    required: true
+    type: string
+  eks-secret-name:
+    description: 'The name of a secret stored in the Kubernetes cluster. Example: mysql-root'
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - name: fetch from Kubernetes secrets
+      run: |-
+        kubectl get secret mysql-notes -n ${{ inputs.namespace }}  -o json | jq  '.data | map_values(@base64d)' | jq -r 'keys[] as $k | "TUTOR_\($k|ascii_upcase)=\(.[$k])"' >> $GITHUB_ENV
+      shell: bash
+
