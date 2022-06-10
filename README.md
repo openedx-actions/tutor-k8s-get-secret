@@ -62,7 +62,7 @@ jobs:
 
       # This action
       - name: Get a secret
-        uses: openedx-actions/tutor-k8s-get-secret      
+        uses: openedx-actions/tutor-k8s-get-secret@v0.0.2   
         with:
           eks-namespace: openedx-prod
           eks-secret-name: mysql-root
