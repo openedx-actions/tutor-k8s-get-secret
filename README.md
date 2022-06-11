@@ -14,7 +14,7 @@ Github Action to extract and decrypt secrets data from k8s and transpose into en
 ```bash
   MYSQL_HOST: stepwisemath-global-live.xyzw93ffci2g.us-east-2.rds.amazonaws.com
   MYSQL_PORT: "3306"
-  NOTES_MYSQL_PASSWORD: your-strong-password
+  NOTES_MYSQL_PASSWORD: ***
   NOTES_MYSQL_USERNAME: prod-notes
 ```
 
