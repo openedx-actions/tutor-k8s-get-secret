@@ -34,7 +34,7 @@ runs:
       run: |-
         echo "k8s secret:"
         echo "=================================================="
-        kubectl get secret ${{ inputs.eks-secret-name }} -n ${{ inputs.eks-namespace }}  -o json | jq  .metadata | jq -r 'keys[] as $k | "\($k)=\(.[$k])"'
+        kubectl get secret ${{ inputs.eks-secret-name }} -n ${{ inputs.eks-namespace }} -o json | jq  .metadata | jq -r 'keys[] as $k | "\($k)=\(.[$k])"'
         echo "=================================================="
 
 
@@ -42,7 +42,7 @@ runs:
     - name: Fetch decode and transform
       id: transform-secret
       shell: bash
-      run: kubectl get secret ${{ inputs.eks-secret-name }} -n ${{ inputs.eks-namespace }}  -o json | jq  '.data | map_values(@base64d)' | jq -r 'keys[] as $k | "TUTOR_\($k|ascii_upcase)=\(.[$k])"' >> $GITHUB_ENV
+      run: kubectl get secret ${{ inputs.eks-secret-name }} -n ${{ inputs.eks-namespace }} -o json | jq  '.data | map_values(@base64d)' | jq -r 'keys[] as $k | "TUTOR_\($k|ascii_upcase)=\(.[$k])"' >> $GITHUB_ENV
 
     # Echo the same output to the console, replacing values with a mask
     - name: Output results to console
@@ -51,6 +51,6 @@ runs:
       run: |-
         echo "secret ${{ inputs.eks-secret-name }} in k8s namespace ${{ inputs.eks-namespace }}"
         echo "=================================================="
-        kubectl get secret mysql-root -n openedx-prod  -o json | jq .data | jq -r 'keys[] as $k | "\($k|ascii_upcase)=***-- OUTPUT HIDDEN --***"'
+        kubectl get secret ${{ inputs.eks-secret-name }} -n ${{ inputs.eks-namespace }} -o json | jq .data | jq -r 'keys[] as $k | "\($k|ascii_upcase)=***-- OUTPUT HIDDEN --***"'
         echo "=================================================="
 
