@@ -67,6 +67,11 @@ runs:
       shell: bash
       run: echo "::add-mask::$PRIVATE_KEY_PEM"
 
+    - name: mask TUTOR_PRIVATE_KEY_PEM
+      if: env.TUTOR_PRIVATE_KEY_PEM != ''
+      shell: bash
+      run: echo "::add-mask::$PRIVATE_KEY_PEM"
+
     # temorary hard-coded mask
     - name: mask private_key
       if: env.private_key != ''
@@ -74,7 +79,13 @@ runs:
       run: echo "::add-mask::$private_key"
 
     # temorary hard-coded mask
-    - name: mask mysql-root
+    - name: mask TUTOR_PRIVATE_KEY
+      if: env.TUTOR_PRIVATE_KEY != ''
+      shell: bash
+      run: echo "::add-mask::$private_key"
+
+    # temorary hard-coded mask
+    - name: mask TUTOR_MYSQL_ROOT_PASSWORD
       if: env.TUTOR_MYSQL_ROOT_PASSWORD != ''
       shell: bash
       run: echo "::add-mask::$TUTOR_MYSQL_ROOT_PASSWORD"
