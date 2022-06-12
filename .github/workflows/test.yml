@@ -1,0 +1,70 @@
+name: Test this action
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: us-east-2
+      NAMESPACE: openedx-prod
+      SECRET:  mysql-root
+      EKS_CLUSTER_NAME: stepwisemath-global-live
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Initialize environment
+        uses: openedx-actions/tutor-k8s-init@v0.0.13
+        with:
+          eks-namespace: ${{ env.NAMESPACE }}
+          eks-cluster-name: ${{ env.EKS_CLUSTER_NAME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # ---------------------------------------------------------------------------------
+      # test
+      # ---------------------------------------------------------------------------------
+      - name: Get a mysql root
+        uses: ./.github/actions/tutor/k8s/get-secret
+        with:
+          eks-namespace: ${{ env.NAMESPACE }}
+          eks-secret-name: ${{ env.SECRET }}
+
+      - name: Get a edx-secret-key
+        uses: ./.github/actions/tutor/k8s/get-secret
+        with:
+          eks-namespace: ${{ env.NAMESPACE }}
+          eks-secret-name: edx-secret-key
+
+      - name: Get a admin-edx
+        uses: ./.github/actions/tutor/k8s/get-secret
+        with:
+          eks-namespace: ${{ env.NAMESPACE }}
+          eks-secret-name: admin-edx
+
+      - name: Get a mysql-ecommerce
+        uses: ./.github/actions/tutor/k8s/get-secret
+        with:
+          eks-namespace: ${{ env.NAMESPACE }}
+          eks-secret-name: mysql-ecommerce
+
+      - name: Get a redis
+        uses: ./.github/actions/tutor/k8s/get-secret
+        with:
+          eks-namespace: ${{ env.NAMESPACE }}
+          eks-secret-name: redis
+
+      - name: Get a s3-openedx-storage
+        uses: ./.github/actions/tutor/k8s/get-secret
+        with:
+          eks-namespace: ${{ env.NAMESPACE }}
+          eks-secret-name: s3-openedx-storage
