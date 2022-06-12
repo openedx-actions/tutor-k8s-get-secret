@@ -23,7 +23,7 @@ will be transposed to the following:
 ```bash
   echo "TUTOR_MYSQL_HOST=stepwisemath-global-live.xyzw93ffci2g.us-east-2.rds.amazonaws.com" >> $GITHUB_ENV
   echo "TUTOR_MYSQL_PORT=3306" >> $GITHUB_ENV
-  echo "TUTOR_NOTES_MYSQL_PASSWORD=BYMNZhquxgqUCbqv" >> $GITHUB_ENV
+  echo "TUTOR_NOTES_MYSQL_PASSWORD=***" >> $GITHUB_ENV
   echo "TUTOR_NOTES_MYSQL_USERNAME=prod-notes"  >> $GITHUB_ENV
 ```
 
