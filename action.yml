@@ -7,6 +7,8 @@
 # - format into a collection of bash environment variables that can be
 #   consumed by tutor on the command line during a ´tutor config save´ operation
 # - add a mask for the password values so that these do not leak into the console
+# - echo k8s secret meta data to console
+# - echo masked secret to the console
 #------------------------------------------------------------------------------
 name: Open edX Tutor k8s get environment secret
 description: Github Action to convert k8s secrets into tutor config variables.
@@ -30,7 +32,7 @@ runs:
     # - dump secret metadata to console
     # - parse data and decode values
     # - output in JSON format
-    - name: Fetch secret meta data from k8s
+    - name: Fetch secret meta data from k8s and echo to the console
       id: fetch-metadata
       shell: bash
       run: |-
@@ -41,86 +43,107 @@ runs:
 
 
     # Fetch, decode, and transpose into environment variables consumable by tutor
-    - name: Fetch decode and transform
+    - name: Fetch decode and transform into tutor environment variables
       id: transform-secret
       shell: bash
       run: kubectl get secret ${{ inputs.eks-secret-name }} -n ${{ inputs.eks-namespace }}  -o json | jq  '.data | map_values(@base64d)' | jq -r 'keys[] as $k | "TUTOR_\($k|ascii_upcase)=\(.[$k])"' >> $GITHUB_ENV
 
     # FIX NOTE: THIS HAS NO EFFECT. WHY?????
+    # see: https://www.cyberciti.biz/faq/linux-unix-bsd-xargs-construct-argument-lists-utility/
     - name: Mask this output
       id: add-mask
       shell: bash
-      run: kubectl get secret ${{ inputs.eks-secret-name }} -n ${{ inputs.eks-namespace }}  -o json | jq  .data | jq 'keys[] as $k | "::add-mask::$TUTOR_\($k|ascii_upcase)"' |  xargs echo
+      run: kubectl get secret ${{ inputs.eks-secret-name }} -n ${{ inputs.eks-namespace }}  -o json | jq  .data | jq 'keys[] as $k | "::add-mask::$TUTOR_\($k|ascii_upcase)"' |  xargs echo -I {}
 
     # FIX NOTE: DELETE THESE
     # -----------------------------------------------
+    # these are temporary hard-coded masks for all
+    # known secret labels created by the Terraform
+    # modules.
+    # -----------------------------------------------
+    # temorary hard-coded mask
+    - name: mask PRIVATE_KEY_PEM
+      if: env.PRIVATE_KEY_PEM != ''
+      shell: bash
+      run: echo "::add-mask::$PRIVATE_KEY_PEM"
+
+    # temorary hard-coded mask
+    - name: mask private_key
+      if: env.private_key != ''
+      shell: bash
+      run: echo "::add-mask::$private_key"
+
+    # temorary hard-coded mask
     - name: mask mysql-root
       if: env.TUTOR_MYSQL_ROOT_PASSWORD != ''
       shell: bash
       run: echo "::add-mask::$TUTOR_MYSQL_ROOT_PASSWORD"
 
+    # temorary hard-coded mask
     - name: mask TUTOR_ADMIN_PASSWORD
       if: env.TUTOR_ADMIN_PASSWORD != ''
       shell: bash
       run: echo "::add-mask::$TUTOR_ADMIN_PASSWORD"
 
+    # temorary hard-coded mask
     - name: mask TUTOR_OPENEDX_SECRET_KEY
       if: env.TUTOR_OPENEDX_SECRET_KEY != ''
       shell: bash
       run: echo "::add-mask::$TUTOR_OPENEDX_SECRET_KEY"
 
+    # temorary hard-coded mask
     - name: mask TUTOR_CREDENTIALS_MYSQL_PASSWORD
       if: env.TUTOR_CREDENTIALS_MYSQL_PASSWORD != ''
       shell: bash
       run: echo "::add-mask::$TUTOR_CREDENTIALS_MYSQL_PASSWORD"
 
+    # temorary hard-coded mask
     - name: mask TUTOR_DISCOVERY_MYSQL_PASSWORD
       if: env.TUTOR_DISCOVERY_MYSQL_PASSWORD != ''
       shell: bash
       run: echo "::add-mask::$TUTOR_DISCOVERY_MYSQL_PASSWORD"
 
+    # temorary hard-coded mask
     - name: mask TUTOR_ECOMMERCE_MYSQL_PASSWORD
       if: env.TUTOR_ECOMMERCE_MYSQL_PASSWORD != ''
       shell: bash
       run: echo "::add-mask::$TUTOR_ECOMMERCE_MYSQL_PASSWORD"
 
+    # temorary hard-coded mask
     - name: mask TUTOR_NOTES_MYSQL_PASSWORD
       if: env.TUTOR_NOTES_MYSQL_PASSWORD != ''
       shell: bash
       run: echo "::add-mask::$TUTOR_NOTES_MYSQL_PASSWORD"
 
+    # temorary hard-coded mask
     - name: mask TUTOR_OPENEDX_MYSQL_PASSWORD
       if: env.TUTOR_OPENEDX_MYSQL_PASSWORD != ''
       shell: bash
       run: echo "::add-mask::$TUTOR_OPENEDX_MYSQL_PASSWORD"
 
+    # temorary hard-coded mask
     - name: mask TUTOR_XQUEUE_MYSQL_PASSWORD
       if: env.TUTOR_XQUEUE_MYSQL_PASSWORD != ''
       shell: bash
       run: echo "::add-mask::$TUTOR_XQUEUE_MYSQL_PASSWORD"
 
+    # temorary hard-coded mask
     - name: mask TUTOR_OPENEDX_AWS_ACCESS_KEY
       if: env.TUTOR_OPENEDX_AWS_ACCESS_KEY != ''
       shell: bash
       run: echo "::add-mask::$TUTOR_OPENEDX_AWS_ACCESS_KEY"
 
+    # temorary hard-coded mask
     - name: mask TUTOR_OPENEDX_AWS_SECRET_ACCESS_KEY
       if: env.TUTOR_OPENEDX_AWS_SECRET_ACCESS_KEY != ''
       shell: bash
       run: echo "::add-mask::$TUTOR_OPENEDX_AWS_SECRET_ACCESS_KEY"
+    # -----------------------------------------------
+    # end of temporary hard-coded masks
+    # -----------------------------------------------
 
+    # Echo the same output to the console
     - name: dump masked output to the console
       id: masked-dump
       shell: bash
       run: kubectl get secret ${{ inputs.eks-secret-name }} -n ${{ inputs.eks-namespace }}  -o json | jq  '.data | map_values(@base64d)' | jq -r 'keys[] as $k | "TUTOR_\($k|ascii_upcase)=\(.[$k])"'
-
-    # Echo the same output to the console, replacing values with a mask
-    #- name: Output results to console
-    #  id: console-output
-    #  shell: bash
-    #  run: |-
-    #    echo "secret ${{ inputs.eks-secret-name }} in k8s namespace ${{ inputs.eks-namespace }}"
-    #    echo "=================================================="
-    #    kubectl get secret mysql-root -n openedx-prod  -o json | jq .data | jq -r 'keys[] as $k | "\($k|ascii_upcase)=***-- OUTPUT HIDDEN --***"'
-    #    echo "=================================================="
-
