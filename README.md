@@ -54,7 +54,7 @@ jobs:
 
       # Intialize the ubuntu environment
       - name: Configure Github workflow environment
-        uses: openedx-actions/tutor-k8s-init@v0.0.1
+        uses: openedx-actions/tutor-k8s-init@v0.0.13
         with:
           eks-namespace: ${{ env.NAMESPACE }}
           eks-cluster-name: ${{ env.EKS_CLUSTER_NAME }}
