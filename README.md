@@ -29,7 +29,7 @@ will be transposed to the following:
 
 This action is designed to work seamlessly with Kubernetes secrets created by the Terraform modules contained in [Cookiecutter Tutor Open edX Production Devops Tools](https://github.com/lpm0073/cookiecutter-openedx-devops).
 
-IMPORTANT SECURITY DISCLAIMER: Sensitive data contained in the Kubernetes secrets is masked in Github Actions logs and console output, while other non-sensitive data is intentionally exposed for diagnostics and trouble shooting purposes. The example above is illustrative of this behavior. Be aware however that this behavior is specific to the secrets that are created in the Cookiecutter and thus, this behavior will **NOT** automatically transcend itself for other non-Cookiecutter Kubernetes secrets you might have created.
+**IMPORTANT SECURITY DISCLAIMER**: Sensitive data contained in the Kubernetes secrets is masked in Github Actions logs and console output, while other non-sensitive data is intentionally exposed for diagnostics and trouble shooting purposes. The example above is illustrative of this behavior. Be aware however that this behavior is specific to the secrets that are created in the Cookiecutter and thus, this behavior will **NOT** automatically transcend itself for other non-Cookiecutter Kubernetes secrets you might have created.
 
 
 ## Usage:
@@ -66,7 +66,7 @@ jobs:
 
       # This action
       - name: Get a secret
-        uses: openedx-actions/tutor-k8s-get-secret@v0.0.7
+        uses: openedx-actions/tutor-k8s-get-secret@v1.0.0
         with:
           eks-namespace: openedx-prod
           eks-secret-name: mysql-root
