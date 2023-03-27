@@ -24,7 +24,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Initialize environment
-        uses: openedx-actions/tutor-k8s-init@v1.0.4
+        uses: openedx-actions/tutor-k8s-init@v1.0.7
         with:
           eks-namespace: ${{ env.NAMESPACE }}
           eks-cluster-name: ${{ env.EKS_CLUSTER_NAME }}
